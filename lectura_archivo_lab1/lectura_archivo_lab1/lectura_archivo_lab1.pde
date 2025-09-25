@@ -1,4 +1,4 @@
-import java.util.ArrayList; //<>// //<>// //<>//
+import java.util.ArrayList;  //<>//
 import java.util.Arrays;
 BufferedReader reader;
 String line;
@@ -11,13 +11,16 @@ ArrayList<Nodo> pasos = new ArrayList<Nodo>();
 int pasoActual = 0;
 Nodo nodoSeleccionado = null;
 
-void setup() {
-  size(1000, 600);
+void settings() {
+  size(displayWidth, displayHeight); // ocupa toda la pantalla
+}
+
+void setup() { // ajusta la ventana a la resolución del PC
   textAlign(CENTER, CENTER);
   textSize(16);
   frameRate(1); // 1 paso por segundo
 
-  // === LECTURA DEL DATASET ===
+  //Lectura del dataset
   reader = createReader("dataset_climate_change.csv");
   try {
     reader.readLine(); // saltar cabecera
@@ -67,9 +70,9 @@ void setup() {
       nodos.add(node);
       pasos.add(node);
 
-      // Aquí decides qué usar para "pasos" en el árbol AVL
-      //pasos.add(objectID); // ejemplo usando el id como clave
-      // pasos.add((int)prom); // si prefieres insertar por promedio de temperatura
+ 
+      //pasos.add(objectID); // usando el id como clave
+      // pasos.add((int)prom); // insertar por promedio de temperatura
     }
   }
 
@@ -80,6 +83,8 @@ void setup() {
 
   above_average_temp_year(1967);
   below_average_tempe_years(1980);
+  println("📌 Recorrido por niveles:");
+  arbol.recorridoPorNiveles();
 }
 
 
@@ -133,14 +138,21 @@ void draw() {
   text("Paso: " + pasoActual, 80, 30);
 
   if (pasoActual < pasos.size()) {
-    Nodo n = pasos.get(pasoActual); // sacar el nodo
-    arbol.root = arbol.insert(arbol.root, n); // importante reasignar la raíz
+    Nodo n = pasos.get(pasoActual);
+    arbol.root = arbol.insert(arbol.root, n);
     pasoActual++;
+  } else if (pasoActual == pasos.size()) {
+    // cuando termine de insertar todos los nodos
+    println("Recorrido por niveles:");
+    arbol.recorridoPorNiveles();
+    pasoActual++; // para que no se repita infinitamente
+  }
+
+  if (arbol.root != null) {
+    dibujarArbol(arbol.root, width/2, 80, width/4);
+  }
 }
 
-
-  dibujarArbol(arbol.root, width/2, 60, width/4);
-}
 
 void dibujarArbol(Nodo nodo, float x, float y, float offset) {
   if (nodo == null) return;
@@ -165,15 +177,14 @@ void dibujarArbol(Nodo nodo, float x, float y, float offset) {
   fill(fe == 0 ? color(0, 150, 0) : color(200, 0, 0));
   text("FE: " + fe, x, y + 25);
 
-  // Verificar clic sobre este nodo
+  // Verificar clic sobre el nodo
   if (mousePressed) {
     float distMouse = dist(mouseX, mouseY, x, y);
-    if (distMouse < 20) { // radio del círculo
+    if (distMouse < 20) { 
       nodoSeleccionado = nodo;
     }
   }
 
-  // Recursión
   dibujarArbol(nodo.left, x - offset, y + 60, offset/1.5);
   dibujarArbol(nodo.right, x + offset, y + 60, offset/1.5);
 }

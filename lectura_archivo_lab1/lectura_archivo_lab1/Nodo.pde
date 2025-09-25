@@ -4,7 +4,7 @@ class Nodo {
   String ISO3;
   double prom_temp;
   ArrayList<Double> temperatures;
-  Nodo left, right;
+  Nodo left, right, pad;
   int altura;
 
   public Nodo(int id, String country, String ISO3, double prom_temp, ArrayList<Double> temperatures) {
@@ -15,6 +15,7 @@ class Nodo {
     this.prom_temp = prom_temp;
     this.left = null;
     this.right = null;
+    this.pad = null;
     this.altura = 1;
   }
 }

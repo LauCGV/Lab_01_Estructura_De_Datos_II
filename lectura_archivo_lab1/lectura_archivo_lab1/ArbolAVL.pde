@@ -1,7 +1,7 @@
 class ArbolAVL {
   Nodo root;
 
-  // ================== BÚSQUEDA ==================
+  //Búsqueda
   Nodo search(Nodo root, double valor) {
     if (root == null) return null;
     if (valor == root.prom_temp) return root;
@@ -9,7 +9,7 @@ class ArbolAVL {
     else return search(root.right, valor);
   }
 
-  // ================== INSERCIÓN ==================
+  //Inserción
   void insert(Nodo node) {
     root = insert(root, node);
   }
@@ -55,7 +55,7 @@ class ArbolAVL {
     return root;
   }
 
-  // ================== ELIMINACIÓN ==================
+  //Eliminación
   void eliminar(double valor) {
     root = eliminar(root, valor);
   }
@@ -78,7 +78,7 @@ class ArbolAVL {
       } else if (nodo.right == null) {
         return nodo.left; // un hijo izquierdo
       } else {
-        // dos hijos → usar sucesor (menor de los mayores)
+        // dos hijos, se usa sucesor
         Nodo sucesor = nodoSucesor(nodo.right);
         nodo.prom_temp = sucesor.prom_temp;
         nodo.id = sucesor.id;
@@ -95,20 +95,20 @@ class ArbolAVL {
     // rebalancear
     int balance = factor_balanceo(nodo);
 
-    // Caso LL
+    // Caso RR
     if (balance < -1 && factor_balanceo(nodo.left) <= 0) {
       return right_rotation(nodo);
     }
-    // Caso LR
+    // Caso DLR
     if (balance < -1 && factor_balanceo(nodo.left) > 0) {
       nodo.left = left_rotation(nodo.left);
       return right_rotation(nodo);
     }
-    // Caso RR
+    // Caso LF
     if (balance > 1 && factor_balanceo(nodo.right) >= 0) {
       return left_rotation(nodo);
     }
-    // Caso RL
+    // Caso DRL
     if (balance > 1 && factor_balanceo(nodo.right) < 0) {
       nodo.right = right_rotation(nodo.right);
       return left_rotation(nodo);
@@ -125,10 +125,9 @@ class ArbolAVL {
     return actual;
   }
 
-  // ================== UTILIDADES ==================
   int factor_balanceo(Nodo node) {
     if (node == null) return 0;
-    return altura(node.right) - altura(node.left); // derecha - izquierda
+    return altura(node.right) - altura(node.left);
   }
 
   int altura(Nodo node) {
@@ -136,7 +135,7 @@ class ArbolAVL {
     return node.altura;
   }
 
-  // ================== ROTACIONES ==================
+  // Rotaciones
   Nodo left_rotation(Nodo nodeX) {
     Nodo nodeY = nodeX.right;
     Nodo subTree = nodeY.left;
@@ -149,7 +148,7 @@ class ArbolAVL {
     nodeX.altura = 1 + max(altura(nodeX.left), altura(nodeX.right));
     nodeY.altura = 1 + max(altura(nodeY.left), altura(nodeY.right));
 
-    println("Rotación Izquierda (RR) en nodo " + nodeX.prom_temp);
+    println("Rotación Izquierda (LR) en nodo " + nodeX.ISO3 +" " + nodeX.prom_temp);
     return nodeY;
   }
 
@@ -165,7 +164,48 @@ class ArbolAVL {
     nodeY.altura = 1 + max(altura(nodeY.left), altura(nodeY.right));
     nodeX.altura = 1 + max(altura(nodeX.left), altura(nodeX.right));
 
-    println("Rotación Derecha (LL) en nodo " + nodeY.prom_temp);
+    println("Rotación Derecha (RR) en nodo " + nodeX.ISO3 +" " + nodeY.prom_temp);
     return nodeX;
+  }
+  
+  // Recorrido niveles
+  void recorridoPorNiveles() {
+    int h = altura(root);
+    for (int i = 1; i <= h; i++) {
+      recorrerNivel(root, i);
+      println();
+    }
+  }
+  
+  // imprime todos los nodos en un nivel específico
+  void recorrerNivel(Nodo nodo, int nivel) {
+    if (nodo == null) return;
+  
+    if (nivel == 1) {
+      print(nodo.ISO3);
+    } else {
+      recorrerNivel(nodo.left, nivel - 1);
+      recorrerNivel(nodo.right, nivel - 1);
+    }
+  }
+  
+  //obtener nivel de un nodo
+  int obtenerNivel(Nodo raiz, double valor) {
+    return obtenerNivelRec(raiz, valor, 1);
+  }
+  
+  int obtenerNivelRec(Nodo nodo, double valor, int nivel) {
+    if (nodo == null) {
+      return 0; 
+    }
+    if (nodo.prom_temp == valor) {
+      return nivel;
+    }
+    // buscar en subárbol izquierdo
+    if (valor < nodo.prom_temp) {
+      return obtenerNivelRec(nodo.left, valor, nivel + 1);
+    } else {
+      return obtenerNivelRec(nodo.right, valor, nivel + 1);
+    }
   }
 }
