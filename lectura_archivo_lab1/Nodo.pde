@@ -13,7 +13,6 @@ class Nodo {
   float alto = height * 0.962;   // alto disponible
 
   float nodoSize = 40;
-  // Helpers para límites
 
 
   public Nodo() {

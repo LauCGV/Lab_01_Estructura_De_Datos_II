@@ -1,4 +1,4 @@
- //<>// //<>//
+ //<>//
 class Vista {
   Boolean pantalla1;
   Boolean pantalla2;

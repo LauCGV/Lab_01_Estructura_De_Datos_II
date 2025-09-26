@@ -6,7 +6,6 @@ class ArbolAVL {
   }
   // ================== BÚSQUEDA ==================
   Nodo search(Nodo root, double valor) {
-    //valor = Math.round(valor * 1e9) / 1e9; //Formateo decimales
     if (root == null) return null;
     if (Math.abs(valor - root.prom_temp) < 1e-6) return root;
     if (valor < root.prom_temp) return search(root.left, valor);
@@ -54,8 +53,6 @@ class ArbolAVL {
   // ============ BÚSQUEDA DE NODOS POR ===========
   //  TEMPERATURA EN UN AÑO MAYOR AL PROMEDIO DE ESE AÑO
 
-  // ============ BÚSQUEDA DE NODOS POR ===========
-  //  TEMPERATURA EN UN AÑO MAYOR AL PROMEDIO DE ESE AÑO
 
   void search_above_prom_year(Nodo nodo, int index, int cant_nodos) {
     if (nodo != null) {
@@ -140,70 +137,6 @@ class ArbolAVL {
     return root;
   }
 
-  /*Nodo eliminar(Nodo nodo, double valor) {
-   if (nodo == null) {
-   return null;
-   }
-   
-   if (valor < nodo.prom_temp) {
-   nodo.left = eliminar(nodo.left, valor);
-   } else if (valor > nodo.prom_temp) {
-   nodo.right = eliminar(nodo.right, valor);
-   } else {
-   // nodo encontrado
-   if (nodo.left == null && nodo.right == null) {
-   return null; // hoja
-   } else if (nodo.left == null) {
-   return nodo.right; // un hijo derecho
-   } else if (nodo.right == null) {
-   return nodo.left; // un hijo izquierdo
-   } else {
-   // dos hijos → usar sucesor (menor de los mayores)
-   Nodo sucesor = nodoSucesor(nodo.right);
-   nodo.prom_temp = sucesor.prom_temp;
-   nodo.id = sucesor.id;
-   nodo.country = sucesor.country;
-   nodo.ISO3 = sucesor.ISO3;
-   nodo.temperatures = sucesor.temperatures;
-   nodo.right = eliminar(nodo.right, sucesor.prom_temp);
-   }
-   }
-   
-   // actualizar altura
-   nodo.altura = 1 + max(altura(nodo.left), altura(nodo.right));
-   
-   // rebalancear
-   int balance = factor_balanceo(nodo);
-   
-   // Caso LL
-   if (balance < -1 && factor_balanceo(nodo.left) <= 0) {
-   return right_rotation(nodo);
-   }
-   // Caso LR
-   if (balance < -1 && factor_balanceo(nodo.left) > 0) {
-   nodo.left = left_rotation(nodo.left);
-   return right_rotation(nodo);
-   }
-   // Caso RR
-   if (balance > 1 && factor_balanceo(nodo.right) >= 0) {
-   return left_rotation(nodo);
-   }
-   // Caso RL
-   if (balance > 1 && factor_balanceo(nodo.right) < 0) {
-   nodo.right = right_rotation(nodo.right);
-   return left_rotation(nodo);
-   }
-   
-   return nodo;
-   }
-   
-   Nodo nodoSucesor(Nodo nodo) {
-   Nodo actual = nodo;
-   while (actual.left != null) {
-   actual = actual.left;
-   }
-   return actual;
-   }*/
   Nodo eliminar(Nodo root, double key) {
     if (root == null) {
       return null;
@@ -233,6 +166,7 @@ class ArbolAVL {
         Nodo sucesor = minValueNode(root.right);
 
         // Copiar datos del sucesor al nodo actual
+        root.id = sucesor.id;
         root.prom_temp = sucesor.prom_temp;
         root.ISO3 = sucesor.ISO3;
         root.country = sucesor.country;
@@ -334,7 +268,6 @@ class ArbolAVL {
     int h = altura(root);
     for (int i = 1; i <= h; i++) {
       recorrerNivel(root, i);
-      //println();
     }
   }
 
@@ -344,7 +277,7 @@ class ArbolAVL {
 
     if (nivel == 1) {
       recorrido_niveles += ","+ nodo.ISO3;
-      //print(nodo.ISO3);
+      
     } else {
       recorrerNivel(nodo.left, nivel - 1);
       recorrerNivel(nodo.right, nivel - 1);
@@ -353,12 +286,12 @@ class ArbolAVL {
 
   //obtener nivel de un nodo
   int obtenerNivel(Nodo raiz, double valor) {
-    return obtenerNivelRec(raiz, valor, 1);
+    return obtenerNivelRec(raiz, valor, 0);
   }
 
   int obtenerNivelRec(Nodo nodo, double valor, int nivel) {
     if (nodo == null) {
-      return 0;
+      return -1;
     }
     if (nodo.prom_temp == valor) {
       return nivel;
@@ -371,33 +304,12 @@ class ArbolAVL {
     }
   }
 
-  //Obtener abuelo
-  Nodo abuelo(Nodo root, double element) {
-    ArrayList<Nodo> resultado = search_iterative(root, element);
-    Nodo nodo = resultado.get(0);
-    Nodo padre = resultado.get(1);
 
-    if (padre == null) {
-      return null;
-    }
-
-    // Buscar al padre dentro del árbol para obtener su propio padre
-    ArrayList<Nodo> resPadre = search_iterative(root, padre.prom_temp);
-    Nodo abuelo = resPadre.get(1);
-
-    return abuelo;
-  }
-
-  Nodo tio(Nodo root, double element) {
-    ArrayList<Nodo> resultado = search_iterative(root, element);
-    Nodo nodo = resultado.get(0);
-    Nodo padre = resultado.get(1);
-
+  Nodo tio(Nodo abuelo, Nodo padre) {
     if (padre == null) {
       return null; // si no hay padre, no hay tío
     }
-
-    Nodo abuelo = abuelo(root, element);
+    //Nodo abuelo = abuelo(root, element);
     if (abuelo == null) {
       return null; // sin abuelo no hay tío
     }

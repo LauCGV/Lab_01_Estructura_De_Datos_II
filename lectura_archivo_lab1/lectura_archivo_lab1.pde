@@ -25,6 +25,7 @@ ArrayList<Nodo> nodos_above_prom = new ArrayList<Nodo>();
 ArrayList<Nodo> nodos_greater_value = new ArrayList<Nodo>();
 String recorrido_niveles = "";
 
+Nodo nodoP = null;
 int cantidad_nodos = 0;
 Nodo nodoSeleccionado = null;
 Vista vista;
@@ -111,14 +112,6 @@ void setup() {
       datos.add(pais);
     }
   }
-
-  /*// Mostrar países cargados
-   for (Nodo nodo : nodos) {
-   println("ObjectID:" + nodo.id + " country:" + nodo.country + " iso:" + nodo.ISO3 + " promedio:" + nodo.prom_temp);
-   }*/
-
-  //above_average_temp_year(1967);
-  //below_average_tempe_years(1980);
 }
 
 
@@ -134,7 +127,6 @@ ArrayList<Nodo> above_average_temp_year(int year) {
   for (Nodo node : nodos) {
     if (node.temperatures.get(index) > promYear) {
       temp.add(node);
-      // println("Pais: "+node.id);
     }
   }
   return temp;
@@ -188,25 +180,6 @@ void draw() {
       vista.mostrarPanelRecorrido();
       vista.ocultarTextFieldsMenu(true);
     }
-  } else if (vista.pantalla3 == true) {
-    background(255);
-    fill(0);
-    //text("Paso: " + pasoActual, 80, 30);
-    if (pasoActual < pasos.size()) {
-      Nodo n = pasos.get(pasoActual); // sacar el nodo
-      arbol.root = arbol.insert(arbol.root, n); // importante reasignar la raíz
-      pasoActual++;
-      //Calcular posiciones iniciales
-      currentX = 0;
-      x.calcularPosiciones(arbol.root, 0);
-      minX = Float.MAX_VALUE;
-      maxX = Float.MIN_VALUE;
-      maxY = 0;
-      x.calcularLimites(arbol.root);
-      x.escalarPosiciones(arbol.root, minX, maxX, maxY);
-    }
-
-    x.dibujar(arbol.root);
   }
 }
 
@@ -216,102 +189,140 @@ void mousePressed() {
     vista.pantalla2 = true;
   }
   if (mouseX >=  width * 0.281 && mouseX <= width * 0.281 + width * 0.026 && mouseY >= height * 0.175 && mouseY <= height * 0.175 + height * 0.0462) {
-    
+
     insertar_nodo(tf_insertar.getText().trim());
     tf_insertar.setText("");
   } else if (mouseX >=  width * 0.281 && mouseX <= width * 0.281 + width * 0.026 && mouseY >= height * 0.175 && mouseY <= height * 0.231 + height * 0.0462) {
-    
+
     eliminar_nodo(tf_eliminar.getText().trim());
+
     tf_eliminar.setText("");
   } else if (mouseX >=  width * 0.281 && mouseX <= width * 0.281 + width * 0.026 && mouseY >= height * 0.453 && mouseY <= height * 0.453 + height * 0.0462) {
-    
-    print("Buscar por promedio");
+    println("");
+    println("BUSCAR POR PROMEDIO");
     try {
       Nodo nodo_temp = arbol.search(arbol.root, Double.parseDouble(tf_buscarProm.getText().trim()));
       if (nodo_temp != null) {
-        print("Id: "+nodo_temp.id + " - country: "+nodo_temp.country+" - ISO3: "+nodo_temp.ISO3+" - promedio de temperatura: "+nodo_temp.prom_temp);
+        println("  Id: "+nodo_temp.id + " - country: "+nodo_temp.country+" - ISO3: "+nodo_temp.ISO3+" - promedio de temperatura: "+nodo_temp.prom_temp);
       } else {
-      print("No existe un nodo con ese promedio.");
-    }
+        println("  No existe un nodo con ese promedio.");
+      }
     }
     catch(NumberFormatException e) {
-      tf_eliminar.setText("Debe ingresar un valor numerico");
+      println("  Debe ingresar un valor numerico");
     }
-      
-    
+    tf_buscarProm.setText("");
   } else if (mouseX >=  width * 0.281 && mouseX <= width * 0.281 + width * 0.026 && mouseY >= height * 0.537 && mouseY <= height * 0.537 + height * 0.0462) {
-    cont = 1;
+
     boolean ver1 = size_year(tf_buscarAño1.getText());
     if (ver1) {
       ArrayList<Nodo> lista1 = new ArrayList<>();
       lista1 = nodos_temp_year(parseInt(tf_buscarAño1.getText()));
-      println("LISTA Año1____________");
+      println("");
+      println("LISTA DE PAISES CRITERIO 1");
+      
       for (Nodo x : lista1) {
-        println(x.ISO3);
+        println(" " + x.ISO3);
       }
+      cont = 1;
     } else {
-      println("Ingrese un año valido.");
+      println("  Ingrese un año valido.");
     }
-    // println("Año");
   } else if (mouseX >=  width * 0.281 && mouseX <= width * 0.281 + width * 0.026 && mouseY >= height * 0.620 && mouseY <= height * 0.620 + height * 0.0462) {
-    cont = 2;
+
     boolean ver2 = size_year(tf_buscarAño2.getText());
     if (ver2) {
       ArrayList<Nodo> lista2 = new ArrayList<>();
       lista2 = nodos_temp_years(parseInt(tf_buscarAño2.getText()));
-       println("LISTA Año2____________");
+      println("");
+      println("LISTA DE PAISES CRITERIO 2");
+      
       for (Nodo x : lista2) {
-        println(x.ISO3);
+        println(" " + x.ISO3);
       }
+      cont = 2;
     } else {
-      println("Ingrese un año valido.");
+      println(" Ingrese un año valido.");
     }
-    // println("Año2");
   } else if (mouseX >=  width * 0.281 && mouseX <= width * 0.281 + width * 0.026 && mouseY >= height * 0.712 && mouseY <= height * 0.712 + height * 0.0462) {
-    cont = 3;
+
     ArrayList<Nodo> lista3 = new ArrayList<>();
     lista3 = nodos_temp_prom(parseInt(tf_buscarValor.getText()));
-     println("LISTA Valor____________");
+    println("");
+    println("LISTA DE PAISES CRITERIO 3");
+    
     for (Nodo x : lista3) {
-      println(x.ISO3);
+      println(" " + x.ISO3);
     }
-    //println("Valor");
+    cont = 3;
   } else if (mouseX >=  width * 0.281 && mouseX <= width * 0.281 + width * 0.026 && mouseY >= height * 0.8518 && mouseY <= height * 0.8518 + height * 0.0462) {
-    // println("ObtenerISO");
-    Nodo nodo = null;
+
     if (cont == 1) {
-      nodo= promedio_busquedas(nodos_lower_prom, tl_obtenerISO.getText());
+      nodoP= promedio_busquedas(nodos_lower_prom, tl_obtenerISO.getText().trim());
     } else if (cont == 2) {
-      nodo= promedio_busquedas(nodos_above_prom, tl_obtenerISO.getText());
+      nodoP= promedio_busquedas(nodos_above_prom, tl_obtenerISO.getText().trim());
     } else if (cont == 3) {
-      nodo = promedio_busquedas(nodos_greater_value, tl_obtenerISO.getText());
+      nodoP = promedio_busquedas(nodos_greater_value, tl_obtenerISO.getText().trim());
     } else if (cont == 0) {
       println("No se ha realizado ninguna busqueda");
     }
-    if (nodo == null) {
-      println("No escogío un ISO existente o no lo ingresó.");
+    if (nodoP != null) {
+      println("DATOS DEL NODO " + nodoP.ISO3);
+      Nodo pa = obtener_pad(nodoP.prom_temp);
+
+      if (pa != null) {
+        println( "  - Padre: "+pa.ISO3);
+        Nodo abu = obtener_pad(pa.prom_temp);
+        if (abu != null) {
+          println( "  - Abuelo: "+ abu.ISO3);
+          Nodo tio = arbol.tio(abu, pa);
+          if (tio != null) {
+            println( "  - Tío: "+ tio.ISO3);
+          } else {
+            println("  - El tio es nulo");
+          }
+        } else {
+          println("  - El abuelo es nulo");
+          println("  - El tío es nulo");
+        }
+      } else {
+        println("  - El padre es nulo.");
+        println("  - El abuelo es nulo.");
+        println("  - El tío es nulo");
+      }
+
+      int FE = arbol.factor_balanceo(nodoP);
+      println( "  - Factor de equilibrio: "+ FE);
+
+      int nivel = arbol.obtenerNivel(arbol.root, nodoP.prom_temp);
+      println( "  - Nivel del nodo: "+ nivel);
     } else {
-      Nodo pa = obtener_pad(nodo.prom_temp);
-      println( "padre: "+pa.ISO3);
-      Nodo abu = arbol.abuelo(nodo, nodo.prom_temp);
-      println( "abuelo: "+ abu.ISO3);
-      Nodo tio = arbol.tio(nodo, nodo.prom_temp);
-      println( "tío: "+ tio.ISO3);
-      int FE = arbol.factor_balanceo(nodo);
-      println( "Factor de equilibrio: "+ FE);
-      int nivel = arbol.obtenerNivel(nodo, nodo.prom_temp);
-      println( "Nivel del nodo: "+ nivel);
+      print("  No se ingreso un ISO valido");
     }
-
-
+    tl_obtenerISO.setText("");
     
   } else if (mouseX >=  width * 0.281 && mouseX <= width * 0.281 + width * 0.026 && mouseY >= height * 0.324 && mouseY <= height * 0.324 + height * 0.0462) {
+
     String pais = tl_nPAIS.getText().trim();
     String iso  = tl_nISO.getText().trim();
-    insertar_nodo_nuevo(pais, iso);
+    
+    if (pais == null || pais.trim().isEmpty() ||
+      iso == null || iso.trim().isEmpty()) {
+      println(" Uno de los campos está vacío o solo tiene espacios.");
+    } else {
+      if (iso.trim().matches("[A-Za-z]{3}")) {
+        insertar_nodo_nuevo(pais, iso);
+      } else {
+        println(" El ISO3 debe tener exactamente 3 letras pegadas");
+      }
+    }
+    tl_nPAIS.setText("");
+    tl_nISO.setText("");
   } else if (mouseX >=  0 && mouseX <= width * 0.322 && mouseY >= height * 0.916 && mouseY <= height * 0.916 + height * 0.074) {
-    println("Por niveles");
+    println("");
+    println("RECORRIDO POR NIVELES");
     String x = recorrido_por_niveles();
+    x = x.substring(1);
     println(x);
   }
 }
@@ -334,7 +345,7 @@ boolean size_year(String year_s) {
 
 Nodo promedio_busquedas(ArrayList<Nodo> nodos_pruebas, String iso_busqueda) {
   for (Nodo n : nodos_pruebas) {
-    if (n.ISO3 == iso_busqueda) {
+    if (n.ISO3.equals(iso_busqueda)) {
       return n;
     }
   }
@@ -400,7 +411,7 @@ boolean insertar_nodo_nuevo(String count, String iso) {
     resultado_prom = arbol.search(arbol.root, prom_temp);
   } while (resultado_prom != null);
   Nodo nodo_nuevo = new Nodo(new_id, count, iso, prom_temp, temp);
-  
+
   dibujarArbolInsertar = true;
   arbol.root = arbol.insert(arbol.root, nodo_nuevo); // importante reasignar la raíz
 
@@ -412,7 +423,7 @@ boolean insertar_nodo_nuevo(String count, String iso) {
   maxY = 0;
   x.calcularLimites(arbol.root);
   x.escalarPosiciones(arbol.root, minX, maxX, maxY);
-  println(nodo_nuevo.ISO3);
+  println("Inserción del nuevo nodo realizada con exito.");
   return true;
 }
 
@@ -465,9 +476,7 @@ ArrayList<Nodo> nodos_temp_prom(double value) {
 
 // ELIMINAR NODO POR ISO3
 void eliminar_nodo(String country) {
-
   arbol.root = arbol.eliminar(Double.parseDouble(country));
-  
 }
 
 // RECORRIDO POR NIVELES
@@ -482,8 +491,6 @@ Nodo obtener_pad(double promedio) {
   temp = arbol.search_iterative(arbol.root, promedio);
   return temp.get(1);
 }
-
-
 
 
 
